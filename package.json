@@ -1,0 +1,23 @@
+{
+  "name": "xml-parser",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: ain't nobody got time for that\" && exit 1"
+  },
+  "bin": {
+    "xml-parser": "./bin/index.js"
+  },
+  "main": "./src/cli.js",
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "cheerio": "^1.0.0-rc.12",
+    "command-line-args": "^5.2.1",
+    "expand-tilde": "^2.0.2",
+    "glob": "^8.0.3",
+    "jsdom": "^20.0.2"
+  }
+}
