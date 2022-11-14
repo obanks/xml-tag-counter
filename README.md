@@ -1,1 +1,3 @@
-node bin/index.js --articlesRoot=test-content
+# XML Parser
+
+`node bin/index.js --articlesRoot=test-content`
