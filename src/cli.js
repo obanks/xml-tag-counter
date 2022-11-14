@@ -44,7 +44,7 @@ export const cli = () => {
     tags.each((_, tag) => {
       const currentTagName = tag.name;
       if (blockList.includes(currentTagName)) {
-        console.log('Ignoring tag');
+        console.log('Tag is on the blocklist, ignoring it');
         return;
       }
       const existingTag = allKnownTags.find(
@@ -60,11 +60,11 @@ export const cli = () => {
         );
         existingTag.count += 1;
       } else {
-        allKnownTags.push({ name: currentTagName, count: 1 });
         console.log(chalk.redBright(`Found new tag ${currentTagName}.`));
+        allKnownTags.push({ name: currentTagName, count: 1 });
       }
     });
   });
-  console.log("scanning complete!");
+  console.log(chalk.magenta(`Scanning complete!`));
   console.log(allKnownTags);
 };
