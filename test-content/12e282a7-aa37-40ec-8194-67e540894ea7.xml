@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="https://production.bbc.co.uk/isite2/project/bbcthree/promo">
+<form>
     <content-body><b>hello!</b><span>i am a span</span><span>and i am another span</span><span><b>i am a nested bold span</b></span></content-body>
 </form>
