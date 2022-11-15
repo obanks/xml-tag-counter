@@ -17,6 +17,19 @@ const unescapeHTML = (escapedHTML) => {
     .replace(/&amp;/g, "&");
 };
 
+export const findTags = (file) => {
+  console.log(`Parsing ${file}`);
+  const fileContents = fs.readFileSync(file, "utf8");
+  let $ = load(fileContents);
+  const contentBody = $("content-body");
+  if (!contentBody.length) {
+    console.log("File is not an article, skipping...");
+    return;
+  }
+  $ = load(unescapeHTML(contentBody.html()));
+  return $("*");
+}
+
 export const cli = () => {
   const articlesRoot = expandTilde(
     commandLineArgs(optionDefinitions).articlesRoot
@@ -31,17 +44,8 @@ export const cli = () => {
 
   const allKnownTags = [];
   sourceFiles.forEach((file) => {
-    console.log(`Parsing ${file}`);
-    const fileContents = fs.readFileSync(file, "utf8");
-    let $ = load(fileContents);
-    const contentBody = $("content-body");
-    if (!contentBody.length) {
-      console.log("File is not an article, skipping...");
-      return;
-    }
-    $ = load(unescapeHTML(contentBody.html()));
-    const tags = $("*");
-    tags.each((_, tag) => {
+    const tags = findTags(file);
+    tags?.each((_, tag) => {
       const currentTagName = tag.name;
       if (blockList.includes(currentTagName)) {
         console.log('Tag is on the blocklist, ignoring it');
