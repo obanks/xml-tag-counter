@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <content-body><b>hello!</b><span>i am a span</span><span>and i am another span</span><span><b>i am a nested bold span</b></span></content-body>
+    <content-body><b test-attribute='123'>hello!</b><span>i am a span</span><span>and i am another span</span><span><b second-attibute='234'>i am a nested bold span</b></span></content-body>
 </form>

@@ -8,7 +8,7 @@ import fs from "fs";
 const optionDefinitions = [
   { name: "articlesRoot", type: String, defaultOption: true },
 ];
-const blockList = ['body', 'html', 'head'];
+const blockList = ["body", "html", "head"];
 
 const unescapeHTML = (escapedHTML) => {
   return escapedHTML
@@ -28,7 +28,9 @@ export const findTags = (file) => {
   }
   $ = load(unescapeHTML(contentBody.html()));
   return $("*");
-}
+};
+
+const getFileName = filePath => filePath.replace(/^.*[\\\/]/, '')
 
 export const cli = () => {
   const articlesRoot = expandTilde(
@@ -47,8 +49,9 @@ export const cli = () => {
     const tags = findTags(file);
     tags?.each((_, tag) => {
       const currentTagName = tag.name;
+      const currentTagAttributes = Object.keys(tag.attribs);
       if (blockList.includes(currentTagName)) {
-        console.log('Tag is on the blocklist, ignoring it');
+        console.log("Tag is on the blocklist, ignoring it");
         return;
       }
       const existingTag = allKnownTags.find(
@@ -63,9 +66,26 @@ export const cli = () => {
           )
         );
         existingTag.count += 1;
+        currentTagAttributes?.forEach((attribute) => {
+          const matchingAttribute = existingTag.attributes.find(
+            (existingAttribute) => existingAttribute === attribute
+          );
+          if (!matchingAttribute) {
+            existingTag.attributes.push(attribute);
+          }
+        });
+        const knownFile = existingTag.examples.find((example) => example === file);
+        if (!knownFile && existingTag.examples.length < 10) {
+          existingTag.examples.push(getFileName(file));
+        }
       } else {
         console.log(chalk.redBright(`Found new tag ${currentTagName}.`));
-        allKnownTags.push({ name: currentTagName, count: 1 });
+        allKnownTags.push({
+          name: currentTagName,
+          count: 1,
+          attributes: currentTagAttributes,
+          examples: [getFileName(file)],
+        });
       }
     });
   });
