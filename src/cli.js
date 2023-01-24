@@ -4,6 +4,7 @@ import glob from "glob";
 import expandTilde from "expand-tilde";
 import { load } from "cheerio";
 import fs from "fs";
+import util from "util";
 
 const optionDefinitions = [
   { name: "articlesRoot", type: String, defaultOption: true },
@@ -37,10 +38,7 @@ export const cli = () => {
   // console.log(chalk.magenta(`Parsing articles in ${articlesRoot}...`));
   var sourceFiles = glob.sync(`${articlesRoot}/*.xml`);
   // console.log(sourceFiles);
-  const youtubeEmbedFiles = new Set();
-  const twitterEmbedFiles = new Set();
-  const instagramEmbedFiles = new Set();
-  const riddleEmbedFiles = new Set();
+  const embeds = [];
 
   sourceFiles.forEach((file) => {
     // console.log(`Parsing ${file}`);
@@ -51,28 +49,36 @@ export const cli = () => {
       // console.log("File is not an article, skipping...");
       return;
     }
+    const filename = file
+    .toString()
+    .substring(file.toString().lastIndexOf("/") + 1);
+    const fileEntries = {
+      filename,
+      youtube: 0,
+      twitter: 0,
+      instagram: 0,
+      riddle: 0,
+    };
     // console.log("scanning", file);
     contentBody.children().map((_, element) => {
       const elementText = $(element).text();
       // console.log("testing node..", elementText);
-      const filename = file.toString().substring(file.toString().lastIndexOf('/') + 1)
       if (regexYoutube.test(elementText)) {
-        youtubeEmbedFiles.add(elementText);
+        fileEntries.youtube++;
       } else if (regexTwitter.test(elementText)) {
-        twitterEmbedFiles.add(elementText);
+        fileEntries.twitter++;
       } else if (regexInstagram.test(elementText)) {
-        instagramEmbedFiles.add(elementText);
+        fileEntries.instagram++;
       } else if (regexRiddle.test(elementText)) {
-        riddleEmbedFiles.add(elementText);
+        fileEntries.riddle++;
       }
     });
+    embeds.push(fileEntries);
   });
   console.log(chalk.magenta(`Scanning complete!`));
-  console.log(
-    "Files containing Instagram embeds: ",
-    instagramEmbedFiles.size
-  );
-  console.log(instagramEmbedFiles);
+  console.log("Embeds found:");
+  console.log(JSON.stringify(embeds));
+  fs.writeFileSync('./data.json', JSON.stringify(embeds) , 'utf-8');
   // console.log("Files containing Youtube embeds: ", youtubeEmbedFiles.size);
   // console.log(youtubeEmbedFiles);
   // console.log("Files containing Twitter embeds: ", twitterEmbedFiles.size);
